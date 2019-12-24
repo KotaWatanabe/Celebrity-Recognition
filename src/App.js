@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import Navigation from './components/Navigation'
 import Form from './components/form/Form'
+import Signin from './components/signin/Signin'
+import Register from './components/register/Register'
 import './App.css';
 import Clarifai from 'clarifai'
 import FaceRecognition from './components/faceRecognition/FaceRecognition'
@@ -17,14 +19,14 @@ class App extends Component {
   state = {
     input:'',
     imageUrl:undefined,
-    name:'',
-    percentage:''
+    celebrityName:'',
+    percentage:'',
+    route:'signin',
+    isSignedIn:false
   }
 
   showResult = (response) => {
-    console.log('hit!!!')
-    this.setState({name:response.outputs[0].data.regions[0].data.concepts[0].name})
-    console.log(this.state.name)
+    this.setState({celebrityName:response.outputs[0].data.regions[0].data.concepts[0].name})
     const percentage = (response.outputs[0].data.regions[0].data.concepts[0].value)*100
    this.setState({percentage})
    
@@ -35,6 +37,7 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
+    if(this.state.input)
     this.setState({imageUrl: this.state.input})
     app.models.
       predict(
@@ -44,16 +47,34 @@ class App extends Component {
       .catch(err => console.log(err));
   }
 
+  onRouteChange = (route) => {
+    if(route === 'signout'){
+      this.setState({isSignedIn: false})
+    }else if(route === 'home'){
+      this.setState({isSignedIn: true})
+    }
+    this.setState({route})
+  }
     
 
   render() {
+    const { isSignedIn, imageUrl, celebrityName, percentage, route } = this.state;
     return (
       <div className="App">
-        <Navigation />
-        <Form onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-        {this.state.imageUrl === undefined ? '': 
-        <FaceRecognition imageUrl={this.state.imageUrl} name={this.state.name} percentage={this.state.percentage}/>}
-        
+       <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
+        { route==='home' ? 
+          <>
+             <Form onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
+             {imageUrl === undefined ? 
+              ''
+              :<FaceRecognition imageUrl={imageUrl} celebrityName={celebrityName} percentage={percentage}/>}
+          </>
+          : (
+            this.state.route === 'signin'
+              ?<Signin onRouteChange={this.onRouteChange}/> 
+              :<Register onRouteChange={this.onRouteChange}/> 
+          )
+        }
       </div>
     );
   }
