@@ -15,23 +15,25 @@ const app = new Clarifai.App({
   apiKey: '378b861234f8416793e39b54bb6d171c'
  });
 
+ const initialState = {
+  input:'',
+  imageUrl:undefined,
+  celebrityName:'',
+  percentage:'',
+  route:'signin',
+  isSignedIn:false,
+  user:{
+    id:'',
+    name:'',
+    email:'',
+    entries:0,
+    joined:''
+  }
+ }
+
 class App extends Component {
 
-  state = {
-    input:'',
-    imageUrl:undefined,
-    celebrityName:'',
-    percentage:'',
-    route:'signin',
-    isSignedIn:false,
-    user:{
-      id:'',
-      name:'',
-      email:'',
-      entries:0,
-      joined:''
-    }
-  }
+  state = initialState;
 
   loadUser = (data) => {
     this.setState({user:{
@@ -74,16 +76,16 @@ class App extends Component {
             .then(count => {
               this.setState(Object.assign(this.state.user, { entries: count}))
             })
+            .catch(console.log)
         }
         this.showResult(response)
       })
-        
       .catch(err => console.log(err));
   }
 
   onRouteChange = (route) => {
     if(route === 'signout'){
-      this.setState({isSignedIn: false})
+      this.setState(initialState)
     }else if(route === 'home'){
       this.setState({isSignedIn: true})
     }
