@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Navigation from './components/Navigation'
 import Form from './components/form/Form'
 import Signin from './components/signin/Signin'
+import Profile from './components/Profile'
 import Register from './components/register/Register'
 import './App.css';
 import Clarifai from 'clarifai'
@@ -22,14 +23,31 @@ class App extends Component {
     celebrityName:'',
     percentage:'',
     route:'signin',
-    isSignedIn:false
+    isSignedIn:false,
+    user:{
+      id:'',
+      name:'',
+      email:'',
+      entries:0,
+      joined:''
+    }
+  }
+
+  loadUser = (data) => {
+    this.setState({user:{
+        id:data.id,
+        name:data.name,
+        email:data.email,
+        entries:data.entries,
+        joined:data.joined
+      }
+    })
   }
 
   showResult = (response) => {
     this.setState({celebrityName:response.outputs[0].data.regions[0].data.concepts[0].name})
     const percentage = (response.outputs[0].data.regions[0].data.concepts[0].value)*100
    this.setState({percentage})
-   
   }
 
   onInputChange = (e) => {
@@ -43,7 +61,23 @@ class App extends Component {
       predict(
         Clarifai.CELEBRITY_MODEL, 
         this.state.input)
-      .then(response => this.showResult(response))
+      .then(response => {
+        if(response){
+          fetch('http://localhost:3000/image',{
+            method:'put',
+            headers: {'content-Type':'application/json'},
+            body:JSON.stringify({
+              id:this.state.user.id
+            })
+          })
+            .then(response => response.json())
+            .then(count => {
+              this.setState(Object.assign(this.state.user, { entries: count}))
+            })
+        }
+        this.showResult(response)
+      })
+        
       .catch(err => console.log(err));
   }
 
@@ -64,6 +98,7 @@ class App extends Component {
        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
         { route==='home' ? 
           <>
+             <Profile name = {this.state.user.name} entries ={this.state.user.entries}/>
              <Form onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
              {imageUrl === undefined ? 
               ''
@@ -71,8 +106,14 @@ class App extends Component {
           </>
           : (
             this.state.route === 'signin'
-              ?<Signin onRouteChange={this.onRouteChange}/> 
-              :<Register onRouteChange={this.onRouteChange}/> 
+              ?<Signin 
+                onRouteChange={this.onRouteChange}
+                loadUser = {this.loadUser}
+               /> 
+              :<Register 
+                  onRouteChange={this.onRouteChange}
+                  loadUser = {this.loadUser}
+                /> 
           )
         }
       </div>
