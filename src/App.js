@@ -5,15 +5,10 @@ import Signin from './components/signin/Signin'
 import Profile from './components/Profile'
 import Register from './components/register/Register'
 import './App.css';
-import Clarifai from 'clarifai'
 import FaceRecognition from './components/faceRecognition/FaceRecognition'
 
 
 // https://samples.clarifai.com/celebrity.jpeg
-
-const app = new Clarifai.App({
-  apiKey: '378b861234f8416793e39b54bb6d171c'
- });
 
  const initialState = {
   input:'',
@@ -59,10 +54,14 @@ class App extends Component {
   onButtonSubmit = () => {
     if(this.state.input)
     this.setState({imageUrl: this.state.input})
-    app.models.
-      predict(
-        Clarifai.CELEBRITY_MODEL, 
-        this.state.input)
+      fetch('http://localhost:3000/imageurl',{
+        method:'post',
+        headers: {'content-Type':'application/json'},
+        body:JSON.stringify({
+          input:this.state.input
+        })
+      })
+      .then(response => response.json())
       .then(response => {
         if(response){
           fetch('http://localhost:3000/image',{
