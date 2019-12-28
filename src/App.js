@@ -54,7 +54,7 @@ class App extends Component {
   onButtonSubmit = () => {
     if(this.state.input)
     this.setState({imageUrl: this.state.input})
-      fetch('http://localhost:3000/imageurl',{
+      fetch('https://pacific-plateau-38966.herokuapp.com/imageurl',{
         method:'post',
         headers: {'content-Type':'application/json'},
         body:JSON.stringify({
@@ -64,7 +64,7 @@ class App extends Component {
       .then(response => response.json())
       .then(response => {
         if(response){
-          fetch('http://localhost:3000/image',{
+          fetch('https://pacific-plateau-38966.herokuapp.com/image',{
             method:'put',
             headers: {'content-Type':'application/json'},
             body:JSON.stringify({

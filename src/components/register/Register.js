@@ -22,7 +22,7 @@ class Register extends Component{
 
     onSubmitRegister= () => {
         const {email, password, name} = this.state
-        fetch('http://localhost:3000/register',{
+        fetch('https://pacific-plateau-38966.herokuapp.com/register',{
             method:'post',
             headers: {'content-Type':'application/json'},
             body:JSON.stringify({
