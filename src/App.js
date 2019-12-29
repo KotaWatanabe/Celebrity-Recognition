@@ -7,9 +7,6 @@ import Register from './components/register/Register'
 import './App.css';
 import FaceRecognition from './components/faceRecognition/FaceRecognition'
 
-
-// https://samples.clarifai.com/celebrity.jpeg
-
  const initialState = {
   input:'',
   imageUrl:undefined,

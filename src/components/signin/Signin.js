@@ -24,7 +24,6 @@ class Signin extends Component{
                 password:this.state.signInPassword
             })
         })
-        .then(console.log(this.state.signInEmail, this.state.signInPassword))
         .then(response => response.json())
         .then(user => {
             if(user.id){

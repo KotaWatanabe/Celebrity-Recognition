@@ -4,10 +4,10 @@ import React from 'react'
     return (
         <div>
             <div className='white f3'>
-                {`${name}, your current entry count is...`}
-            </div>
-            <div className='white f1'>
-                {entries}
+            {entries > 0 ? 
+                `Hi ${name}, you found ${entries} celebrity name! Keep going on!`
+               :`Hi ${name}, you have naver found celebrity name!`
+            }
             </div>
         </div>
     )
