@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Navigation from './components/Navigation'
+import Navigation from './components/navigation/Navigation'
 import Form from './components/form/Form'
 import Signin from './components/signin/Signin'
 import Profile from './components/Profile'
@@ -41,7 +41,7 @@ class App extends Component {
   showResult = (response) => {
     this.setState({celebrityName:response.outputs[0].data.regions[0].data.concepts[0].name})
     const percentage = (response.outputs[0].data.regions[0].data.concepts[0].value)*100
-   this.setState({percentage})
+    this.setState({percentage})
   }
 
   onInputChange = (e) => {
